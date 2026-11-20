@@ -1,0 +1,22 @@
+services:
+  audit-evidence-api:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: audit-usb-evidence-api
+    ports:
+      - "127.0.0.1:8765:8765"
+    environment:
+      AUDIT_DB_PATH: /data/audit-evidence.sqlite3
+    volumes:
+      - audit-evidence-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8765/api/health', timeout=2)"]
+      interval: 30s
+      timeout: 4s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  audit-evidence-data:
